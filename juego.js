@@ -41,7 +41,12 @@ let CONFIG = {
     gravedadMaxima: 1.2,
     velocidadHorizontal: 5,
     vidaMaxima: 100,
-    vidasIniciales: 3
+    vidasIniciales: 3,
+    // densidad de obstáculos según tamaño de pantalla
+    plataformasMinimas: 8,
+    plataformasIniciales: 15,
+    maxEnemigosBase: 3,
+    esMobil: false
 };
 
 // escala para responsive
@@ -154,6 +159,31 @@ function ajustarCanvas() {
     CONFIG.alto = altoVentana;
 
     escala = anchoVentana / 800;
+
+    // detectar si es móvil y ajustar densidad de obstáculos
+    CONFIG.esMobil = anchoVentana < 768;
+
+    if (CONFIG.esMobil) {
+        // móvil: menos obstáculos
+        CONFIG.plataformasMinimas = 6;
+        CONFIG.plataformasIniciales = 12;
+        CONFIG.maxEnemigosBase = 2;
+    } else if (anchoVentana > 1920) {
+        // pantallas grandes (PC): MUCHOS más obstáculos
+        CONFIG.plataformasMinimas = 15;
+        CONFIG.plataformasIniciales = 25;
+        CONFIG.maxEnemigosBase = 5;
+    } else if (anchoVentana > 1366) {
+        // PC estándar: más obstáculos
+        CONFIG.plataformasMinimas = 12;
+        CONFIG.plataformasIniciales = 20;
+        CONFIG.maxEnemigosBase = 4;
+    } else {
+        // tablet/laptop pequeño: obstáculos medios
+        CONFIG.plataformasMinimas = 8;
+        CONFIG.plataformasIniciales = 15;
+        CONFIG.maxEnemigosBase = 3;
+    }
 }
 
 // ========================================
@@ -215,10 +245,13 @@ function generarPlataformasIniciales() {
         velocidad: 0
     });
 
-    // generar más plataformas hacia abajo
+    // generar más plataformas hacia abajo (cantidad según tamaño de pantalla)
     let yActual = 250;
-    for (let i = 0; i < 15; i++) {
-        yActual += aleatorio(80, 120);
+    const cantidadInicial = CONFIG.plataformasIniciales;
+
+    for (let i = 0; i < cantidadInicial; i++) {
+        const espaciado = CONFIG.esMobil ? aleatorio(70, 100) : aleatorio(80, 120);
+        yActual += espaciado;
         generarPlataforma(yActual);
     }
 }
@@ -385,9 +418,19 @@ function actualizarFisica() {
         // generar plataformas adicionales para asegurar cobertura en esquinas
         // esto evita que haya "zonas vacías" donde el jugador pueda explotar
         const plataformasEnPantalla = plataformas.filter(p => p.y > 0 && p.y < CONFIG.alto);
-        if (plataformasEnPantalla.length < 8) {
-            // no hay suficientes plataformas visibles, generar más
-            generarPlataforma(plataformaMasBaja + aleatorio(espacioMin, espacioMax));
+        const plataformasMinimas = CONFIG.plataformasMinimas;
+
+        if (plataformasEnPantalla.length < plataformasMinimas) {
+            // no hay suficientes plataformas visibles, generar VARIAS más
+            const faltantes = plataformasMinimas - plataformasEnPantalla.length;
+            for (let i = 0; i < faltantes; i++) {
+                generarPlataforma(plataformaMasBaja + aleatorio(espacioMin, espacioMax) + (i * 80));
+            }
+        }
+
+        // en PC generar más plataformas para rellenar esquinas
+        if (!CONFIG.esMobil && Math.random() < 0.3) {
+            generarPlataforma(plataformaMasBaja + aleatorio(espacioMin * 0.5, espacioMax * 0.5));
         }
     } else {
         // bug fix: detectar si está estancado en las esquinas o bordes
@@ -510,22 +553,53 @@ function detectarColisiones() {
 // ========================================
 
 function actualizarEnemigos() {
-    // generar enemigos con más frecuencia según dificultad
+    // generar enemigos con más frecuencia según dificultad y tamaño de pantalla
     const dificultad = estadoJuego.nivelDificultad;
-    const probabilidadEnemigo = Math.min(0.03, 0.008 + (dificultad * 0.003));
-    const maxEnemigos = Math.min(6, 3 + Math.floor(dificultad / 2));
+
+    // en PC más enemigos, en móvil menos
+    const multiplicadorPantalla = CONFIG.esMobil ? 0.7 : 1.5;
+    const probabilidadBase = 0.008 + (dificultad * 0.003);
+    const probabilidadEnemigo = Math.min(0.05, probabilidadBase * multiplicadorPantalla);
+
+    const maxEnemigosBase = CONFIG.maxEnemigosBase;
+    const maxEnemigos = Math.min(maxEnemigosBase * 2, maxEnemigosBase + Math.floor(dificultad / 2));
 
     if (Math.random() < probabilidadEnemigo && enemigos.length < maxEnemigos) {
         const lado = Math.random() > 0.5 ? 'izquierda' : 'derecha';
         const velocidadBase = 2 + (dificultad * 0.3);
 
+        // en PC generar enemigos más distribuidos verticalmente
+        const rangoY = CONFIG.esMobil ?
+            aleatorio(100, CONFIG.alto - 100) :
+            aleatorio(50, CONFIG.alto - 50);
+
         enemigos.push({
             x: lado === 'izquierda' ? -30 : CONFIG.ancho + 30,
-            y: aleatorio(100, CONFIG.alto - 100),
+            y: rangoY,
             ancho: 25,
             alto: 20,
             velocidad: lado === 'izquierda' ? velocidadBase : -velocidadBase,
             color: '#ef4444',
+            ultimoDisparo: Date.now()
+        });
+    }
+
+    // bonus: generar enemigos extra si la pelota está en las esquinas
+    const enEsquinaIzq = pelota.x < CONFIG.ancho * 0.2;
+    const enEsquinaDer = pelota.x > CONFIG.ancho * 0.8;
+
+    if ((enEsquinaIzq || enEsquinaDer) && Math.random() < 0.02 && enemigos.length < maxEnemigos) {
+        // generar enemigo del lado contrario para forzar movimiento
+        const ladoContrario = enEsquinaIzq ? 'derecha' : 'izquierda';
+        const velocidadBase = 3 + (dificultad * 0.4);
+
+        enemigos.push({
+            x: ladoContrario === 'izquierda' ? -30 : CONFIG.ancho + 30,
+            y: pelota.y + aleatorio(-100, 100),
+            ancho: 25,
+            alto: 20,
+            velocidad: ladoContrario === 'izquierda' ? velocidadBase : -velocidadBase,
+            color: '#dc2626',
             ultimoDisparo: Date.now()
         });
     }
