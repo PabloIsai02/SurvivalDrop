@@ -164,25 +164,25 @@ function ajustarCanvas() {
     CONFIG.esMobil = anchoVentana < 768;
 
     if (CONFIG.esMobil) {
-        // móvil: menos obstáculos
+        // móvil: menos obstáculos pero suficientes para desafío
         CONFIG.plataformasMinimas = 6;
         CONFIG.plataformasIniciales = 12;
-        CONFIG.maxEnemigosBase = 2;
+        CONFIG.maxEnemigosBase = 3; // aumentado de 2 a 3
     } else if (anchoVentana > 1920) {
         // pantallas grandes (PC): MUCHOS más obstáculos
         CONFIG.plataformasMinimas = 15;
         CONFIG.plataformasIniciales = 25;
-        CONFIG.maxEnemigosBase = 5;
+        CONFIG.maxEnemigosBase = 8; // aumentado de 5 a 8
     } else if (anchoVentana > 1366) {
         // PC estándar: más obstáculos
         CONFIG.plataformasMinimas = 12;
         CONFIG.plataformasIniciales = 20;
-        CONFIG.maxEnemigosBase = 4;
+        CONFIG.maxEnemigosBase = 6; // aumentado de 4 a 6
     } else {
         // tablet/laptop pequeño: obstáculos medios
         CONFIG.plataformasMinimas = 8;
         CONFIG.plataformasIniciales = 15;
-        CONFIG.maxEnemigosBase = 3;
+        CONFIG.maxEnemigosBase = 4; // aumentado de 3 a 4
     }
 }
 
@@ -321,7 +321,12 @@ function generarPlataforma(y) {
     }
 
     // más púas con mayor dificultad
-    const probabilidadPuas = Math.min(0.5, 0.15 + (dificultad * 0.05));
+    // En móvil menos púas, en PC más púas
+    const probabilidadBase = CONFIG.esMobil ? 0.25 : 0.35;
+    const incrementoPorDificultad = CONFIG.esMobil ? 0.04 : 0.07;
+    const probabilidadMaxima = CONFIG.esMobil ? 0.5 : 0.7;
+    const probabilidadPuas = Math.min(probabilidadMaxima, probabilidadBase + (dificultad * incrementoPorDificultad));
+
     if (Math.random() < probabilidadPuas && tipo === 'solida') {
         plataforma.tienePuas = true;
     }
@@ -931,6 +936,11 @@ function finalizarJuego() {
 
     // esperar un momento antes de mostrar la pantalla de game over
     setTimeout(() => {
+        // limpiar el canvas para que no interfiera con la pantalla de game over
+        ctx.clearRect(0, 0, CONFIG.ancho, CONFIG.alto);
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, CONFIG.ancho, CONFIG.alto);
+
         // guardar mejor puntuación
         guardarMejorPuntuacion(estadoJuego.puntuacion);
 
