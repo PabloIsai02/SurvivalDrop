@@ -49,7 +49,13 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    /* Overlay negro más fuerte para resaltar contenido */
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.65) 50%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
     z-index: 0;
 }
 
@@ -65,7 +71,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.9);
     border-radius: 0;
     z-index: 100;
 }
@@ -76,31 +82,50 @@ body {
 
 /* Pantalla de inicio */
 .titulo-juego {
-    font-size: 4em;
-    color: #fff;
-    /* sombra más fuerte para destacar sobre cielo */
+    font-size: 8.5em;
+    color: #FFF;
+    font-family: 'Nabla', monospace;
+    letter-spacing: 0.1em;
+    /* Efecto pixel art con sombra gruesa */
     text-shadow:
-        3px 3px 0 #000,
-        -1px -1px 0 #000,
-        1px -1px 0 #000,
-        -1px 1px 0 #000,
-        0 0 20px rgba(255, 215, 0, 0.6);
-    margin-bottom: 10px;
-    animation: flotar 3s ease-in-out infinite;
+        4px 4px 0 #FF6B35,
+        8px 8px 0 #000,
+        0 0 30px rgba(255, 107, 53, 0.5);
+    margin-bottom: 20px;
+    animation: flotar 3s ease-in-out infinite, brillar 2s ease-in-out infinite;
     font-weight: bold;
+    text-transform: uppercase;
 }
 
 .subtitulo-juego {
-    font-size: 1.8em;
-    color: #FFD700;
-    /* sombra de texto para que destaque */
+    font-size: 1.6em;
+    color: #4ECDC4;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.15em;
+    /* Sombra con efecto neón */
     text-shadow:
         2px 2px 0 #000,
-        -1px -1px 0 #000,
-        1px -1px 0 #000,
-        -1px 1px 0 #000;
-    margin-bottom: 50px;
+        0 0 10px #4ECDC4,
+        0 0 20px #4ECDC4;
+    margin-bottom: 60px;
     font-weight: bold;
+    text-transform: uppercase;
+}
+
+@keyframes brillar {
+    0%, 100% {
+        text-shadow:
+            4px 4px 0 #FF6B35,
+            8px 8px 0 #000,
+            0 0 30px rgba(255, 107, 53, 0.5);
+    }
+    50% {
+        text-shadow:
+            4px 4px 0 #FF6B35,
+            8px 8px 0 #000,
+            0 0 50px rgba(255, 107, 53, 0.8),
+            0 0 60px rgba(255, 107, 53, 0.6);
+    }
 }
 
 @keyframes flotar {
@@ -114,66 +139,124 @@ body {
     gap: 15px;
 }
 
-/* Botones */
+/* Botones - Estilo Retro Pixel Art */
 .boton-principal {
-    padding: 15px 40px;
-    font-size: 1.3em;
+    padding: 18px 50px;
+    font-size: 1.4em;
     font-weight: bold;
-    color: #fff;
-    /* colores que combinan con cielo */
-    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-    border: 3px solid #000;
-    border-radius: 50px;
+    font-family: 'Courier New', monospace;
+    color: #FFF;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    /* Degradado vibrante */
+    background: linear-gradient(180deg, #FFE66D 0%, #FF6B35 100%);
+    border: 4px solid #000;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 0 #000, 0 8px 20px rgba(0, 0, 0, 0.4);
-    text-shadow: 2px 2px 0 #000;
+    transition: all 0.2s ease;
+    /* Sombra 3D estilo pixel art */
+    box-shadow:
+        0 6px 0 #C44536,
+        0 8px 0 #000,
+        0 12px 20px rgba(0, 0, 0, 0.5);
+    text-shadow:
+        2px 2px 0 #000,
+        -1px -1px 0 rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
 .boton-principal:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 0 #000, 0 12px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(-4px);
+    box-shadow:
+        0 10px 0 #C44536,
+        0 12px 0 #000,
+        0 16px 25px rgba(0, 0, 0, 0.6);
+    background: linear-gradient(180deg, #FFE66D 0%, #FF8E53 100%);
 }
 
 .boton-principal:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 0 #000, 0 4px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(2px);
+    box-shadow:
+        0 4px 0 #C44536,
+        0 6px 0 #000,
+        0 8px 15px rgba(0, 0, 0, 0.4);
 }
 
 .boton-secundario {
-    padding: 12px 35px;
-    font-size: 1.1em;
-    color: #fff;
-    background: rgba(100, 200, 255, 0.8);
-    border: 3px solid #000;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 0 #000, 0 6px 15px rgba(0, 0, 0, 0.3);
-    text-shadow: 1px 1px 0 #000;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    font-family: 'Courier New', monospace;
+    color: #FFF;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     font-weight: bold;
+    /* Degradado cyan/azul */
+    background: linear-gradient(180deg, #4ECDC4 0%, #1A535C 100%);
+    border: 4px solid #000;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow:
+        0 5px 0 #0F3238,
+        0 7px 0 #000,
+        0 10px 18px rgba(0, 0, 0, 0.5);
+    text-shadow:
+        2px 2px 0 #000,
+        -1px -1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .boton-secundario:hover {
-    background: rgba(120, 220, 255, 0.9);
     transform: translateY(-3px);
-    box-shadow: 0 6px 0 #000, 0 9px 20px rgba(0, 0, 0, 0.4);
+    box-shadow:
+        0 8px 0 #0F3238,
+        0 10px 0 #000,
+        0 14px 22px rgba(0, 0, 0, 0.6);
+    background: linear-gradient(180deg, #6FE7DD 0%, #2A6F77 100%);
 }
 
 .boton-secundario:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 0 #000, 0 4px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(2px);
+    box-shadow:
+        0 3px 0 #0F3238,
+        0 5px 0 #000,
+        0 7px 14px rgba(0, 0, 0, 0.4);
 }
 
 .boton-pequeño {
-    padding: 8px 20px;
-    font-size: 0.9em;
-    color: #fff;
-    background: #667eea;
-    border: none;
-    border-radius: 20px;
+    padding: 10px 25px;
+    font-size: 1em;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #FFF;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #F38181 0%, #AA4465 100%);
+    border: 3px solid #000;
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 20px;
+    box-shadow:
+        0 4px 0 #6B2737,
+        0 6px 0 #000,
+        0 8px 15px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 0 #000;
+    transition: all 0.2s ease;
+}
+
+.boton-pequeño:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 0 #6B2737,
+        0 8px 0 #000,
+        0 10px 18px rgba(0, 0, 0, 0.6);
+}
+
+.boton-pequeño:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 3px 0 #6B2737,
+        0 5px 0 #000,
+        0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 .boton-pausa {
@@ -193,28 +276,52 @@ body {
 
 /* Tabla de puntuaciones */
 .tabla-puntuaciones {
-    margin-top: 30px;
-    padding: 25px 40px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 4px solid #000;
+    margin-top: 40px;
+    padding: 30px 50px;
+    background: linear-gradient(135deg, rgba(255, 230, 109, 0.95) 0%, rgba(255, 142, 83, 0.95) 100%);
+    border: 5px solid #000;
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0 5px 0 #000, 0 8px 20px rgba(0, 0, 0, 0.4);
+    box-shadow:
+        0 6px 0 #C44536,
+        0 8px 0 #000,
+        0 12px 25px rgba(0, 0, 0, 0.6);
+    position: relative;
+}
+
+.tabla-puntuaciones::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border: 2px dashed rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    pointer-events: none;
 }
 
 .tabla-puntuaciones h3 {
-    color: #333;
-    margin-bottom: 10px;
-    font-size: 1.3em;
+    color: #000;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    font-family: 'Courier New', monospace;
     font-weight: bold;
-    text-shadow: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
 }
 
 .tabla-puntuaciones p {
-    font-size: 2.5em;
-    color: #FF6B6B;
+    font-size: 3.5em;
+    font-family: 'Courier New', monospace;
+    color: #FFF;
     font-weight: bold;
-    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    text-shadow:
+        3px 3px 0 #C44536,
+        6px 6px 0 #000,
+        0 0 20px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.05em;
 }
 
 /* Canvas y pantalla de juego */
@@ -286,24 +393,50 @@ body {
 
 /* Pantalla de pausa */
 .panel-pausa, .panel-gameover {
-    background: rgba(30, 27, 75, 0.95);
-    padding: 40px 60px;
+    background: linear-gradient(135deg, rgba(26, 83, 92, 0.95) 0%, rgba(15, 50, 56, 0.98) 100%);
+    padding: 50px 70px;
     border-radius: 20px;
     text-align: center;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-    border: 2px solid rgba(102, 126, 234, 0.5);
+    box-shadow:
+        0 8px 0 #0A1F23,
+        0 10px 0 #000,
+        0 15px 40px rgba(0, 0, 0, 0.7);
+    border: 5px solid #000;
+    position: relative;
+}
+
+.panel-pausa::before, .panel-gameover::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 2px dashed rgba(78, 205, 196, 0.3);
+    border-radius: 15px;
+    pointer-events: none;
 }
 
 .panel-pausa h2, .panel-gameover h2 {
-    color: #fff;
-    font-size: 2.5em;
-    margin-bottom: 20px;
+    color: #4ECDC4;
+    font-size: 3em;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.1em;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    text-shadow:
+        3px 3px 0 #1A535C,
+        6px 6px 0 #000,
+        0 0 20px rgba(78, 205, 196, 0.5);
 }
 
 .panel-pausa p {
-    color: #a5b4fc;
-    font-size: 1.2em;
-    margin-bottom: 30px;
+    color: #FFF;
+    font-size: 1.3em;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 35px;
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 0.05em;
 }
 
 .botones-gameover {
@@ -315,33 +448,52 @@ body {
 
 /* Game Over específico */
 .titulo-gameover {
-    color: #ef4444;
-    text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+    color: #F38181 !important;
+    text-shadow:
+        3px 3px 0 #AA4465,
+        6px 6px 0 #000,
+        0 0 30px rgba(243, 129, 129, 0.8) !important;
 }
 
 .mensaje-final {
-    color: #a5b4fc;
-    font-size: 1.1em;
-    margin-bottom: 10px;
+    color: #FFE66D;
+    font-size: 1.2em;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-shadow: 2px 2px 0 #000;
 }
 
 .puntuacion-grande {
-    font-size: 3.5em;
-    color: #fbbf24;
+    font-size: 4.5em;
+    font-family: 'Courier New', monospace;
+    color: #FFE66D;
     font-weight: bold;
-    text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
-    margin-bottom: 15px;
+    text-shadow:
+        4px 4px 0 #FF6B35,
+        8px 8px 0 #000,
+        0 0 30px rgba(255, 230, 109, 0.8);
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
 }
 
 .mensaje-mejor {
-    color: #a5b4fc;
-    font-size: 1em;
-    margin-bottom: 10px;
+    color: #4ECDC4;
+    font-size: 1.1em;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 .mensaje-mejor span {
-    color: #fbbf24;
+    color: #FFE66D;
     font-weight: bold;
+    text-shadow:
+        2px 2px 0 #FF6B35,
+        4px 4px 0 #000;
 }
 
 /* ========================================
@@ -351,28 +503,45 @@ body {
 /* Tablets y pantallas medianas */
 @media screen and (max-width: 900px) {
     .titulo-juego {
-        font-size: 3em;
+        font-size: 3.5em;
+        text-shadow:
+            3px 3px 0 #FF6B35,
+            6px 6px 0 #000,
+            0 0 25px rgba(255, 107, 53, 0.5);
     }
 
     .subtitulo-juego {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
 
     .boton-principal {
-        padding: 12px 30px;
+        padding: 16px 40px;
+        font-size: 1.2em;
+    }
+
+    .boton-secundario {
+        padding: 14px 35px;
         font-size: 1.1em;
     }
 
     .panel-pausa, .panel-gameover {
-        padding: 30px 40px;
+        padding: 40px 50px;
     }
 
     .panel-pausa h2, .panel-gameover h2 {
-        font-size: 2em;
+        font-size: 2.5em;
     }
 
     .puntuacion-grande {
-        font-size: 2.8em;
+        font-size: 3.5em;
+    }
+
+    .tabla-puntuaciones {
+        padding: 25px 40px;
+    }
+
+    .tabla-puntuaciones p {
+        font-size: 3em;
     }
 }
 
@@ -380,23 +549,27 @@ body {
 @media screen and (max-width: 600px) {
 
     .titulo-juego {
-        font-size: 2.5em;
-        margin-bottom: 5px;
+        font-size: 2.8em;
+        margin-bottom: 10px;
+        text-shadow:
+            3px 3px 0 #FF6B35,
+            5px 5px 0 #000,
+            0 0 20px rgba(255, 107, 53, 0.5);
     }
 
     .subtitulo-juego {
-        font-size: 1.2em;
-        margin-bottom: 30px;
+        font-size: 1.1em;
+        margin-bottom: 40px;
     }
 
     .boton-principal {
-        padding: 10px 25px;
-        font-size: 1em;
+        padding: 14px 35px;
+        font-size: 1.1em;
     }
 
     .boton-secundario {
-        padding: 8px 20px;
-        font-size: 0.9em;
+        padding: 12px 30px;
+        font-size: 1em;
     }
 
     .hud {
@@ -427,40 +600,48 @@ body {
     }
 
     .panel-pausa, .panel-gameover {
-        padding: 20px 30px;
-        margin: 10px;
+        padding: 30px 40px;
+        margin: 15px;
     }
 
     .panel-pausa h2, .panel-gameover h2 {
-        font-size: 1.8em;
+        font-size: 2em;
         margin-bottom: 15px;
+        text-shadow:
+            2px 2px 0 #1A535C,
+            4px 4px 0 #000,
+            0 0 15px rgba(78, 205, 196, 0.5);
     }
 
     .panel-pausa p {
         font-size: 1em;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
     .puntuacion-grande {
-        font-size: 2.2em;
+        font-size: 2.8em;
+        text-shadow:
+            3px 3px 0 #FF6B35,
+            5px 5px 0 #000,
+            0 0 20px rgba(255, 230, 109, 0.6);
     }
 
     .botones-gameover {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
     }
 
     .tabla-puntuaciones {
-        padding: 15px;
-        margin-top: 20px;
+        padding: 20px 30px;
+        margin-top: 30px;
     }
 
     .tabla-puntuaciones h3 {
-        font-size: 0.9em;
+        font-size: 1.1em;
     }
 
     .tabla-puntuaciones p {
-        font-size: 2em;
+        font-size: 2.5em;
     }
 }
 
