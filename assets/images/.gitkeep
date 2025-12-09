@@ -1,1 +1,14 @@
-# Aquí van las imágenes del juego (si se necesitan)
+# Aquí van las imágenes del juego
+
+## IMAGEN DE FONDO REQUERIDA:
+- Nombre: cielo-pixelart.png
+- Tipo: Imagen pixelart del cielo
+- Recomendado: 1920x1080 o mayor
+- Estilo: Pixel art con cielo azul, nubes blancas
+
+INSTRUCCIONES:
+1. Guarda tu imagen de cielo pixelart como: cielo-pixelart.png
+2. Colócala en esta carpeta: assets/images/
+3. El juego la usará automáticamente como fondo del menú
+
+Si no hay imagen, se usará un color celeste (#87CEEB) como fallback.
