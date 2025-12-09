@@ -115,17 +115,7 @@ SurvivalDrop/
         └── gameover.mp3
 ```
 
-## Configuración de Git (Para Desarrollo)
 
-Si quieres contribuir o modificar el código, configura tu usuario de Git **solo para este repositorio**:
-
-```bash
-cd SurvivalDrop
-git config user.name "PabloIsai02"
-git config user.email "a22311049@uthermosillo.edu.mx"
-```
-
-Esto asegura que los commits se hagan con el usuario correcto.
 
 ## Historial de Desarrollo
 
@@ -215,10 +205,5 @@ El juego se vuelve progresivamente más difícil:
 
 Desarrollado por **PabloIsai02** como proyecto académico.
 
-## Licencia
-
-Este proyecto es de código abierto y está disponible para fines educativos.
-
----
 
 ¡Diviértete jugando y trata de conseguir el mejor puntaje! 🎮✨
