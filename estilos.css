@@ -13,12 +13,17 @@ body {
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 .contenedor-principal {
     position: relative;
     width: 800px;
     height: 600px;
+    max-width: 100vw;
+    max-height: 100vh;
+    transition: all 0.3s ease;
 }
 
 /* Pantallas */
@@ -283,4 +288,192 @@ body {
 .mensaje-mejor span {
     color: #fbbf24;
     font-weight: bold;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablets y pantallas medianas */
+@media screen and (max-width: 900px) {
+    .titulo-juego {
+        font-size: 3em;
+    }
+
+    .subtitulo-juego {
+        font-size: 1.5em;
+    }
+
+    .boton-principal {
+        padding: 12px 30px;
+        font-size: 1.1em;
+    }
+
+    .panel-pausa, .panel-gameover {
+        padding: 30px 40px;
+    }
+
+    .panel-pausa h2, .panel-gameover h2 {
+        font-size: 2em;
+    }
+
+    .puntuacion-grande {
+        font-size: 2.8em;
+    }
+}
+
+/* Móviles */
+@media screen and (max-width: 600px) {
+    body {
+        padding: 0;
+    }
+
+    .contenedor-principal {
+        border-radius: 0;
+    }
+
+    .pantalla {
+        border-radius: 0;
+    }
+
+    .pantalla-overlay {
+        border-radius: 0;
+    }
+
+    .titulo-juego {
+        font-size: 2.5em;
+        margin-bottom: 5px;
+    }
+
+    .subtitulo-juego {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+    }
+
+    .boton-principal {
+        padding: 10px 25px;
+        font-size: 1em;
+    }
+
+    .boton-secundario {
+        padding: 8px 20px;
+        font-size: 0.9em;
+    }
+
+    .hud {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .etiqueta {
+        font-size: 0.75em;
+    }
+
+    .valor {
+        font-size: 1em;
+    }
+
+    .boton-pausa {
+        padding: 6px 10px;
+        font-size: 0.85em;
+    }
+
+    .contenedor-barra-vida {
+        width: 200px;
+        height: 20px;
+        bottom: 15px;
+    }
+
+    .panel-pausa, .panel-gameover {
+        padding: 20px 30px;
+        margin: 10px;
+    }
+
+    .panel-pausa h2, .panel-gameover h2 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+
+    .panel-pausa p {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    .puntuacion-grande {
+        font-size: 2.2em;
+    }
+
+    .botones-gameover {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .tabla-puntuaciones {
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .tabla-puntuaciones h3 {
+        font-size: 0.9em;
+    }
+
+    .tabla-puntuaciones p {
+        font-size: 2em;
+    }
+
+    #canvas {
+        border-radius: 0;
+    }
+}
+
+/* Pantallas pequeñas (landscape en móvil) */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .titulo-juego {
+        font-size: 2em;
+        margin-bottom: 5px;
+    }
+
+    .subtitulo-juego {
+        font-size: 1em;
+        margin-bottom: 15px;
+    }
+
+    .botones-inicio {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .boton-principal, .boton-secundario {
+        padding: 8px 20px;
+        font-size: 0.9em;
+    }
+
+    .panel-pausa, .panel-gameover {
+        padding: 15px 25px;
+    }
+
+    .panel-pausa h2, .panel-gameover h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .puntuacion-grande {
+        font-size: 1.8em;
+    }
+}
+
+/* Soporte táctil */
+@media (hover: none) and (pointer: coarse) {
+    .boton-principal:hover,
+    .boton-secundario:hover,
+    .boton-pausa:hover {
+        transform: none;
+    }
+
+    .boton-principal:active {
+        transform: scale(0.95);
+    }
 }
