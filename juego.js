@@ -141,38 +141,19 @@ function aleatorio(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-// ajustar canvas al tamaño de pantalla (responsive)
+// ajustar canvas al tamaño de pantalla (fullscreen 100%)
 function ajustarCanvas() {
     const anchoVentana = window.innerWidth;
     const altoVentana = window.innerHeight;
 
-    // mantener aspecto 4:3 aproximadamente
-    let nuevoAncho, nuevoAlto;
+    // canvas ocupa 100% de la pantalla
+    canvas.width = anchoVentana;
+    canvas.height = altoVentana;
 
-    if (anchoVentana / altoVentana > 4 / 3) {
-        // pantalla muy ancha, limitamos por altura
-        nuevoAlto = Math.min(altoVentana * 0.95, 800);
-        nuevoAncho = nuevoAlto * (4 / 3);
-    } else {
-        // pantalla más alta o cuadrada, limitamos por ancho
-        nuevoAncho = Math.min(anchoVentana * 0.95, 1000);
-        nuevoAlto = nuevoAncho * (3 / 4);
-    }
+    CONFIG.ancho = anchoVentana;
+    CONFIG.alto = altoVentana;
 
-    canvas.width = nuevoAncho;
-    canvas.height = nuevoAlto;
-
-    CONFIG.ancho = nuevoAncho;
-    CONFIG.alto = nuevoAlto;
-
-    escala = nuevoAncho / 800;
-
-    // actualizar tamaño del contenedor
-    const contenedor = document.querySelector('.contenedor-principal');
-    if (contenedor) {
-        contenedor.style.width = nuevoAncho + 'px';
-        contenedor.style.height = nuevoAlto + 'px';
-    }
+    escala = anchoVentana / 800;
 }
 
 // ========================================
@@ -261,7 +242,25 @@ function generarPlataforma(y) {
     const anchoMin = Math.max(60, 100 - (dificultad * 5));
     const anchoMax = Math.max(100, 150 - (dificultad * 3));
     const ancho = aleatorio(anchoMin, anchoMax);
-    const x = aleatorio(50, CONFIG.ancho - ancho - 50);
+
+    // generar plataformas en TODA la pantalla, incluyendo esquinas
+    // dividir en 3 zonas: izquierda (0-33%), centro (33-66%), derecha (66-100%)
+    const zona = Math.floor(Math.random() * 3);
+    let x;
+
+    if (zona === 0) {
+        // zona izquierda (incluye esquina izquierda)
+        x = aleatorio(0, CONFIG.ancho / 3 - ancho);
+    } else if (zona === 1) {
+        // zona centro
+        x = aleatorio(CONFIG.ancho / 3, (CONFIG.ancho * 2 / 3) - ancho);
+    } else {
+        // zona derecha (incluye esquina derecha)
+        x = aleatorio(CONFIG.ancho * 2 / 3, CONFIG.ancho - ancho);
+    }
+
+    // asegurar que no salga de los límites
+    x = Math.max(0, Math.min(x, CONFIG.ancho - ancho));
 
     let plataforma = {
         x: x,
@@ -382,15 +381,30 @@ function actualizarFisica() {
         if (plataformaMasBaja < CONFIG.alto + 200) {
             generarPlataforma(plataformaMasBaja + aleatorio(espacioMin, espacioMax));
         }
+
+        // generar plataformas adicionales para asegurar cobertura en esquinas
+        // esto evita que haya "zonas vacías" donde el jugador pueda explotar
+        const plataformasEnPantalla = plataformas.filter(p => p.y > 0 && p.y < CONFIG.alto);
+        if (plataformasEnPantalla.length < 8) {
+            // no hay suficientes plataformas visibles, generar más
+            generarPlataforma(plataformaMasBaja + aleatorio(espacioMin, espacioMax));
+        }
     } else {
-        // bug fix: detectar si está estancado en las esquinas
-        if (Math.abs(estadoJuego.ultimaPosicionY - pelota.y) < 5) {
+        // bug fix: detectar si está estancado en las esquinas o bordes
+        const estaCercaDeBorde = pelota.x < 100 || pelota.x > CONFIG.ancho - 100;
+        const noAvanzaVerticalmente = Math.abs(estadoJuego.ultimaPosicionY - pelota.y) < 3;
+
+        if (noAvanzaVerticalmente) {
             estadoJuego.tiempoSinAvanzar++;
 
-            // si lleva más de 3 segundos sin avanzar verticalmente, causar daño
-            if (estadoJuego.tiempoSinAvanzar > 180) { // 3 segundos a 60 fps
-                recibirDaño(5); // daño gradual
-                estadoJuego.tiempoSinAvanzar = 120; // resetear parcialmente para daño continuo
+            // tiempo más corto si está cerca de los bordes (anti-exploit más agresivo)
+            const tiempoMaximo = estaCercaDeBorde ? 90 : 150; // 1.5s en bordes, 2.5s en centro
+
+            if (estadoJuego.tiempoSinAvanzar > tiempoMaximo) {
+                // daño más fuerte si está en los bordes
+                const dañoBase = estaCercaDeBorde ? 10 : 5;
+                recibirDaño(dañoBase);
+                estadoJuego.tiempoSinAvanzar = tiempoMaximo - 60; // resetear parcialmente
             }
         } else {
             estadoJuego.ultimaPosicionY = pelota.y;
@@ -851,14 +865,30 @@ function gameLoop() {
 
 // Teclado
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') teclas.izquierda = true;
-    if (e.key === 'ArrowRight') teclas.derecha = true;
+    // movimiento con flechas y WASD
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') teclas.izquierda = true;
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') teclas.derecha = true;
+
+    // pausa con P
     if (e.key === 'p' || e.key === 'P') pausarJuego();
+
+    // salir al menú con ESC
+    if (e.key === 'Escape') {
+        if (estadoJuego.jugando) {
+            estadoJuego.jugando = false;
+            estadoJuego.pausado = false;
+            if (sonidos.musicaFondo) {
+                sonidos.musicaFondo.pause();
+                sonidos.musicaFondo.currentTime = 0;
+            }
+            mostrarPantallaInicio();
+        }
+    }
 });
 
 document.addEventListener('keyup', (e) => {
-    if (e.key === 'ArrowLeft') teclas.izquierda = false;
-    if (e.key === 'ArrowRight') teclas.derecha = false;
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') teclas.izquierda = false;
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') teclas.derecha = false;
 });
 
 // Botones de inicio
