@@ -33,16 +33,19 @@ const puntuacionFinal = document.getElementById('puntuacionFinal');
 const mejorPuntuacionFinal = document.getElementById('mejorPuntuacionFinal');
 const barraVida = document.getElementById('barraVida');
 
-// Configuración del juego
-const CONFIG = {
+// Configuración del juego (se ajusta dinámicamente para responsive)
+let CONFIG = {
     ancho: 800,
     alto: 600,
-    gravedadInicial: 0.3,
-    gravedadMaxima: 0.8,
+    gravedadInicial: 0.4,
+    gravedadMaxima: 1.2,
     velocidadHorizontal: 5,
     vidaMaxima: 100,
     vidasIniciales: 3
 };
+
+// escala para responsive
+let escala = 1;
 
 // Estado del juego
 let estadoJuego = {
@@ -54,7 +57,9 @@ let estadoJuego = {
     mejorPuntuacion: 0,
     distanciaRecorrida: 0,
     tiempoInicio: 0,
-    nivelDificultad: 1
+    nivelDificultad: 1,
+    ultimaPosicionY: 0,
+    tiempoSinAvanzar: 0
 };
 
 // Pelota del jugador
@@ -78,6 +83,13 @@ let particulas = [];
 let teclas = {
     izquierda: false,
     derecha: false
+};
+
+// Controles táctiles
+let touch = {
+    activo: false,
+    startX: 0,
+    direccion: 0 // -1 izquierda, 1 derecha, 0 sin movimiento
 };
 
 // Sistema de sonido
@@ -129,11 +141,48 @@ function aleatorio(min, max) {
     return Math.random() * (max - min) + min;
 }
 
+// ajustar canvas al tamaño de pantalla (responsive)
+function ajustarCanvas() {
+    const anchoVentana = window.innerWidth;
+    const altoVentana = window.innerHeight;
+
+    // mantener aspecto 4:3 aproximadamente
+    let nuevoAncho, nuevoAlto;
+
+    if (anchoVentana / altoVentana > 4 / 3) {
+        // pantalla muy ancha, limitamos por altura
+        nuevoAlto = Math.min(altoVentana * 0.95, 800);
+        nuevoAncho = nuevoAlto * (4 / 3);
+    } else {
+        // pantalla más alta o cuadrada, limitamos por ancho
+        nuevoAncho = Math.min(anchoVentana * 0.95, 1000);
+        nuevoAlto = nuevoAncho * (3 / 4);
+    }
+
+    canvas.width = nuevoAncho;
+    canvas.height = nuevoAlto;
+
+    CONFIG.ancho = nuevoAncho;
+    CONFIG.alto = nuevoAlto;
+
+    escala = nuevoAncho / 800;
+
+    // actualizar tamaño del contenedor
+    const contenedor = document.querySelector('.contenedor-principal');
+    if (contenedor) {
+        contenedor.style.width = nuevoAncho + 'px';
+        contenedor.style.height = nuevoAlto + 'px';
+    }
+}
+
 // ========================================
 // INICIALIZACIÓN
 // ========================================
 
 function inicializarJuego() {
+    // ajustar canvas para responsive
+    ajustarCanvas();
+
     // resetear estado del juego
     estadoJuego.puntuacion = 0;
     estadoJuego.vidas = CONFIG.vidasIniciales;
@@ -143,6 +192,8 @@ function inicializarJuego() {
     estadoJuego.nivelDificultad = 1;
     estadoJuego.jugando = true;
     estadoJuego.pausado = false;
+    estadoJuego.ultimaPosicionY = 0;
+    estadoJuego.tiempoSinAvanzar = 0;
 
     // resetear pelota
     pelota.x = CONFIG.ancho / 2;
@@ -192,10 +243,24 @@ function generarPlataformasIniciales() {
 }
 
 function generarPlataforma(y) {
-    const tipos = ['solida', 'solida', 'solida', 'fragil', 'movil'];
+    // aumentar dificultad: más plataformas peligrosas con el nivel
+    const dificultad = estadoJuego.nivelDificultad;
+    let tipos;
+
+    if (dificultad >= 5) {
+        tipos = ['solida', 'fragil', 'fragil', 'movil', 'movil'];
+    } else if (dificultad >= 3) {
+        tipos = ['solida', 'solida', 'fragil', 'fragil', 'movil'];
+    } else {
+        tipos = ['solida', 'solida', 'solida', 'fragil', 'movil'];
+    }
+
     const tipo = tipos[Math.floor(Math.random() * tipos.length)];
 
-    const ancho = aleatorio(80, 150);
+    // plataformas más pequeñas con mayor dificultad
+    const anchoMin = Math.max(60, 100 - (dificultad * 5));
+    const anchoMax = Math.max(100, 150 - (dificultad * 3));
+    const ancho = aleatorio(anchoMin, anchoMax);
     const x = aleatorio(50, CONFIG.ancho - ancho - 50);
 
     let plataforma = {
@@ -212,16 +277,20 @@ function generarPlataforma(y) {
     // configurar según tipo
     if (tipo === 'fragil') {
         plataforma.color = '#f59e0b';
+        // frágiles se rompen más rápido en niveles altos
+        plataforma.tiempoRomperMax = Math.max(500, 800 - (dificultad * 30));
     } else if (tipo === 'movil') {
         plataforma.color = '#10b981';
-        plataforma.velocidad = aleatorio(1, 2);
+        // plataformas móviles más rápidas con la dificultad
+        plataforma.velocidad = aleatorio(1 + (dificultad * 0.2), 2.5 + (dificultad * 0.3));
         plataforma.direccion = Math.random() > 0.5 ? 1 : -1;
     } else {
         plataforma.color = '#8b5cf6';
     }
 
-    // algunas plataformas con púas (zona peligrosa)
-    if (Math.random() < 0.2 && tipo === 'solida') {
+    // más púas con mayor dificultad
+    const probabilidadPuas = Math.min(0.5, 0.15 + (dificultad * 0.05));
+    if (Math.random() < probabilidadPuas && tipo === 'solida') {
         plataforma.tienePuas = true;
     }
 
@@ -244,10 +313,10 @@ function actualizarFisica() {
     // aplicar gravedad
     pelota.velocidadY += gravedad;
 
-    // movimiento horizontal con teclas
-    if (teclas.izquierda) {
+    // movimiento horizontal con teclas y táctil
+    if (teclas.izquierda || touch.direccion === -1) {
         pelota.velocidadX = -CONFIG.velocidadHorizontal;
-    } else if (teclas.derecha) {
+    } else if (teclas.derecha || touch.direccion === 1) {
         pelota.velocidadX = CONFIG.velocidadHorizontal;
     } else {
         // inercia: reducir velocidad horizontal gradualmente
@@ -296,15 +365,36 @@ function actualizarFisica() {
         estadoJuego.distanciaRecorrida += desplazamiento;
         estadoJuego.puntuacion = Math.floor(estadoJuego.distanciaRecorrida / 10);
 
-        // aumentar dificultad cada 500 puntos
-        estadoJuego.nivelDificultad = Math.floor(estadoJuego.puntuacion / 500) + 1;
+        // resetear contador de tiempo sin avanzar (está bajando)
+        estadoJuego.ultimaPosicionY = pelota.y;
+        estadoJuego.tiempoSinAvanzar = 0;
 
-        // generar nuevas plataformas cuando sea necesario
+        // aumentar dificultad cada 300 puntos (antes 500)
+        estadoJuego.nivelDificultad = Math.floor(estadoJuego.puntuacion / 300) + 1;
+
+        // generar nuevas plataformas más espaciadas con mayor dificultad
         const plataformaMasBaja = plataformas.reduce((min, plat) =>
             plat.y > min ? plat.y : min, 0);
 
+        const espacioMin = 80 + (estadoJuego.nivelDificultad * 5);
+        const espacioMax = 120 + (estadoJuego.nivelDificultad * 8);
+
         if (plataformaMasBaja < CONFIG.alto + 200) {
-            generarPlataforma(plataformaMasBaja + aleatorio(80, 120));
+            generarPlataforma(plataformaMasBaja + aleatorio(espacioMin, espacioMax));
+        }
+    } else {
+        // bug fix: detectar si está estancado en las esquinas
+        if (Math.abs(estadoJuego.ultimaPosicionY - pelota.y) < 5) {
+            estadoJuego.tiempoSinAvanzar++;
+
+            // si lleva más de 3 segundos sin avanzar verticalmente, causar daño
+            if (estadoJuego.tiempoSinAvanzar > 180) { // 3 segundos a 60 fps
+                recibirDaño(5); // daño gradual
+                estadoJuego.tiempoSinAvanzar = 120; // resetear parcialmente para daño continuo
+            }
+        } else {
+            estadoJuego.ultimaPosicionY = pelota.y;
+            estadoJuego.tiempoSinAvanzar = 0;
         }
     }
 
@@ -324,7 +414,8 @@ function actualizarFisica() {
 
         // plataforma frágil con timer
         if (plat.tipo === 'fragil' && plat.tiempoRomper !== null) {
-            if (Date.now() - plat.tiempoRomper > 800) {
+            const tiempoMax = plat.tiempoRomperMax || 800;
+            if (Date.now() - plat.tiempoRomper > tiempoMax) {
                 plat.rota = true;
             }
         }
@@ -405,15 +496,21 @@ function detectarColisiones() {
 // ========================================
 
 function actualizarEnemigos() {
-    // generar enemigos ocasionalmente
-    if (Math.random() < 0.01 && enemigos.length < 3) {
+    // generar enemigos con más frecuencia según dificultad
+    const dificultad = estadoJuego.nivelDificultad;
+    const probabilidadEnemigo = Math.min(0.03, 0.008 + (dificultad * 0.003));
+    const maxEnemigos = Math.min(6, 3 + Math.floor(dificultad / 2));
+
+    if (Math.random() < probabilidadEnemigo && enemigos.length < maxEnemigos) {
         const lado = Math.random() > 0.5 ? 'izquierda' : 'derecha';
+        const velocidadBase = 2 + (dificultad * 0.3);
+
         enemigos.push({
             x: lado === 'izquierda' ? -30 : CONFIG.ancho + 30,
             y: aleatorio(100, CONFIG.alto - 100),
             ancho: 25,
             alto: 20,
-            velocidad: lado === 'izquierda' ? 2 : -2,
+            velocidad: lado === 'izquierda' ? velocidadBase : -velocidadBase,
             color: '#ef4444',
             ultimoDisparo: Date.now()
         });
@@ -423,8 +520,9 @@ function actualizarEnemigos() {
     enemigos.forEach((enemigo, index) => {
         enemigo.x += enemigo.velocidad;
 
-        // disparar cada 2 segundos
-        if (Date.now() - enemigo.ultimoDisparo > 2000) {
+        // disparar más rápido con mayor dificultad (de 2 segundos a 1 segundo)
+        const tiempoDisparo = Math.max(1000, 2000 - (dificultad * 150));
+        if (Date.now() - enemigo.ultimoDisparo > tiempoDisparo) {
             dispararProyectil(enemigo);
             enemigo.ultimoDisparo = Date.now();
         }
@@ -442,12 +540,15 @@ function dispararProyectil(enemigo) {
     const dy = pelota.y - enemigo.y;
     const distancia = Math.hypot(dx, dy);
 
+    // proyectiles más rápidos con la dificultad
+    const velocidadProyectil = 4 + (estadoJuego.nivelDificultad * 0.4);
+
     proyectiles.push({
         x: enemigo.x,
         y: enemigo.y,
         radio: 5,
-        velocidadX: (dx / distancia) * 4,
-        velocidadY: (dy / distancia) * 4,
+        velocidadX: (dx / distancia) * velocidadProyectil,
+        velocidadY: (dy / distancia) * velocidadProyectil,
         color: '#f87171'
     });
 }
@@ -798,9 +899,53 @@ botonMenuGameOver.addEventListener('click', () => {
     mostrarPantallaInicio();
 });
 
+// Controles táctiles para móvil
+canvas.addEventListener('touchstart', (e) => {
+    if (!estadoJuego.jugando || estadoJuego.pausado) return;
+    e.preventDefault();
+
+    const touchX = e.touches[0].clientX;
+    touch.activo = true;
+    touch.startX = touchX;
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    if (!estadoJuego.jugando || estadoJuego.pausado || !touch.activo) return;
+    e.preventDefault();
+
+    const touchX = e.touches[0].clientX;
+    const rect = canvas.getBoundingClientRect();
+    const centroCanvas = rect.left + (rect.width / 2);
+
+    // determinar dirección según posición del toque
+    if (touchX < centroCanvas - 50) {
+        touch.direccion = -1; // izquierda
+    } else if (touchX > centroCanvas + 50) {
+        touch.direccion = 1; // derecha
+    } else {
+        touch.direccion = 0; // centro
+    }
+});
+
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    touch.activo = false;
+    touch.direccion = 0;
+});
+
+// Ajustar canvas cuando cambia el tamaño de ventana
+window.addEventListener('resize', () => {
+    if (!estadoJuego.jugando) {
+        ajustarCanvas();
+    }
+});
+
 // ========================================
 // INICIAR APLICACIÓN
 // ========================================
+
+// ajustar canvas al cargar
+ajustarCanvas();
 
 mostrarPantallaInicio();
 gameLoop();
