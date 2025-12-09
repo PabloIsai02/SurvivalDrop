@@ -901,20 +901,44 @@ function pausarJuego() {
 function finalizarJuego() {
     estadoJuego.jugando = false;
 
-    // guardar mejor puntuación
-    guardarMejorPuntuacion(estadoJuego.puntuacion);
+    // efecto visual dramático: flash rojo
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.7)';
+    ctx.fillRect(0, 0, CONFIG.ancho, CONFIG.alto);
 
-    // mostrar pantalla de game over
-    puntuacionFinal.textContent = estadoJuego.puntuacion;
-    mejorPuntuacionFinal.textContent = obtenerMejorPuntuacion();
-    pantallaGameOver.classList.remove('oculto');
+    // mostrar texto grande "¡PERDISTE!" en el canvas
+    ctx.fillStyle = '#FFF';
+    ctx.font = 'bold ' + (CONFIG.ancho / 10) + 'px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 8;
+    ctx.strokeText('¡PERDISTE!', CONFIG.ancho / 2, CONFIG.alto / 2);
+    ctx.fillText('¡PERDISTE!', CONFIG.ancho / 2, CONFIG.alto / 2);
 
+    // texto secundario
+    ctx.font = 'bold ' + (CONFIG.ancho / 20) + 'px Arial';
+    ctx.lineWidth = 4;
+    ctx.strokeText('Te quedaste sin vidas', CONFIG.ancho / 2, CONFIG.alto / 2 + 80);
+    ctx.fillText('Te quedaste sin vidas', CONFIG.ancho / 2, CONFIG.alto / 2 + 80);
+
+    // reproducir sonido inmediatamente
     reproducirSonido(sonidos.gameOver);
 
     if (sonidos.musicaFondo) {
         sonidos.musicaFondo.pause();
         sonidos.musicaFondo.currentTime = 0;
     }
+
+    // esperar un momento antes de mostrar la pantalla de game over
+    setTimeout(() => {
+        // guardar mejor puntuación
+        guardarMejorPuntuacion(estadoJuego.puntuacion);
+
+        // mostrar pantalla de game over
+        puntuacionFinal.textContent = estadoJuego.puntuacion;
+        mejorPuntuacionFinal.textContent = obtenerMejorPuntuacion();
+        pantallaGameOver.classList.remove('oculto');
+    }, 1500); // espera 1.5 segundos para leer el mensaje
 }
 
 // ========================================
