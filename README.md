@@ -17,9 +17,12 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
 - 📊 Sistema de puntuación con localStorage
 - 🎨 Interfaz visual moderna y atractiva
 - 📱 **Totalmente responsive** - Funciona en PC, tablet y móvil
+- 🖥️ **Pantalla completa** - El juego ocupa el 100% del viewport
 - 🎯 **Controles táctiles** optimizados para dispositivos móviles
+- ⌨️ **WASD + Flechas** - Dos opciones de control en teclado
 - 🔥 **Dificultad progresiva** que aumenta cada 300 puntos
-- 🛡️ **Sistema anti-exploits** que evita puntuaciones infinitas
+- 🛡️ **Sistema anti-exploits mejorado** - Previene score infinito en esquinas
+- 🎮 **ESC para salir** - Vuelve al menú principal en cualquier momento
 
 ## Tipos de Plataformas
 
@@ -31,9 +34,10 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
 ## Controles
 
 ### PC (Teclado)
-- **Flecha Izquierda**: Mover la pelota hacia la izquierda
-- **Flecha Derecha**: Mover la pelota hacia la derecha
+- **Flecha Izquierda / A**: Mover la pelota hacia la izquierda
+- **Flecha Derecha / D**: Mover la pelota hacia la derecha
 - **P**: Pausar/Despausar el juego
+- **ESC**: Salir al menú principal
 - **Click en botones**: Navegar por los menús
 
 ### Móvil (Táctil)
@@ -124,10 +128,17 @@ El proyecto se desarrolló de manera incremental con los siguientes commits:
 13. **Refactor y limpieza final** - Optimización del código
 14. **Agregar README con instrucciones completas** - Documentación
 
-### Mejoras y Optimizaciones
-15. **Arreglar bug de score infinito en esquinas** - Sistema anti-exploit
+### Mejoras y Optimizaciones (V1.1)
+15. **Arreglar bug de score infinito en esquinas** - Sistema anti-exploit inicial
 16. **Aumentar dificultad progresiva del juego** - Balance y desafío mejorado
 17. **Hacer el juego responsive y agregar controles táctiles** - Soporte móvil completo
+18. **Actualizar README con nuevas características** - Documentación completa
+
+### Versión 2.0 - Fullscreen y Anti-Exploit Mejorado
+19. **Implementar modo fullscreen 100% viewport** - Juego a pantalla completa
+20. **Agregar controles WASD y tecla ESC** - Más opciones de control
+21. **Arreglar bug de esquinas definitivamente** - Plataformas en toda la pantalla
+22. **Sistema anti-exploit mejorado** - Daño diferencial por zona
 
 ## Sistema de Puntuación
 
@@ -160,7 +171,13 @@ El juego se vuelve progresivamente más difícil:
   - Se mueven más rápido
   - Disparan cada vez más rápido (de 2 segundos a 1 segundo)
   - Proyectiles más veloces
-- **Sistema anti-exploit**: Daño gradual si te quedas más de 3 segundos sin bajar
+- **Sistema anti-exploit mejorado**:
+  - Daño gradual si no avanzas verticalmente
+  - Daño más fuerte (10 HP) en los bordes (1.5 segundos)
+  - Daño normal (5 HP) en el centro (2.5 segundos)
+  - Plataformas distribuidas en TODA la pantalla (esquinas incluidas)
+  - Generación adicional de plataformas si hay pocas visibles
+  - ¡Imposible hacer score infinito quedándose quieto!
 
 ## Tecnologías Utilizadas
 
