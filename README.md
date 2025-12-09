@@ -15,7 +15,7 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
 - ✨ Efectos visuales (trail, partículas, degradados)
 - 🎵 Sistema de sonidos (música de fondo, efectos)
 - 📊 Sistema de puntuación con localStorage
-- 🎨 Interfaz visual moderna y atractiva
+- 🎨 **Menú con fondo pixelart** - Personalizable con imagen de cielo
 - 📱 **Totalmente responsive** - Funciona en PC, tablet y móvil
 - 🖥️ **Pantalla completa** - El juego ocupa el 100% del viewport
 - 🎯 **Controles táctiles** optimizados para dispositivos móviles
@@ -23,6 +23,8 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
 - 🔥 **Dificultad progresiva** que aumenta cada 300 puntos
 - 🛡️ **Sistema anti-exploits mejorado** - Previene score infinito en esquinas
 - 🎮 **ESC para salir** - Vuelve al menú principal en cualquier momento
+- 📐 **Densidad adaptativa** - Más obstáculos en PC, optimizado en móvil
+- 🎯 **Enemigos especiales** - Se generan extra si estás en las esquinas
 
 ## Tipos de Plataformas
 
@@ -48,6 +50,20 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
 
 > **Nota**: El juego es completamente responsive y se adapta automáticamente al tamaño de tu pantalla.
 
+## Personalización del Fondo
+
+El menú principal usa una **imagen de fondo pixelart del cielo**. Para personalizarla:
+
+1. **Crea o descarga** una imagen pixelart de cielo
+2. **Guárdala como**: `cielo-pixelart.png`
+3. **Colócala en**: `assets/images/cielo-pixelart.png`
+4. **Recomendaciones**:
+   - Resolución: 1920x1080 o mayor
+   - Estilo: Pixel art con cielo azul y nubes
+   - Formato: PNG con transparencia (opcional)
+
+Si no hay imagen, se usará un **color celeste (#87CEEB)** como fallback.
+
 ## Cómo Ejecutar el Juego
 
 ### Opción 1: Ejecutar localmente
@@ -58,7 +74,10 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
    cd SurvivalDrop
    ```
 
-2. Abre el archivo `index.html` en tu navegador favorito:
+2. **(Opcional)** Agrega tu imagen de fondo:
+   - Coloca `cielo-pixelart.png` en `assets/images/`
+
+3. Abre el archivo `index.html` en tu navegador favorito:
    - Doble click en el archivo
    - O desde la terminal: `open index.html` (Mac) o `start index.html` (Windows)
 
@@ -139,6 +158,12 @@ El proyecto se desarrolló de manera incremental con los siguientes commits:
 20. **Agregar controles WASD y tecla ESC** - Más opciones de control
 21. **Arreglar bug de esquinas definitivamente** - Plataformas en toda la pantalla
 22. **Sistema anti-exploit mejorado** - Daño diferencial por zona
+
+### Versión 2.1 - Densidad Adaptativa y Diseño Mejorado
+23. **Densidad de obstáculos adaptativa** - Más plataformas en PC, menos en móvil
+24. **Sistema de enemigos mejorado** - Extra enemigos en esquinas para prevenir exploits
+25. **Rediseño del menú principal** - Soporte para fondo pixelart personalizable
+26. **Estilos visuales mejorados** - Botones y textos con efecto pixel art
 
 ## Sistema de Puntuación
 
