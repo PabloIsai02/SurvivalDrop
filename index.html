@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falling Ball: Survival Drop</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="contenedor-principal">
+        <!-- Pantalla de inicio -->
+        <div id="pantallaInicio" class="pantalla">
+            <h1 class="titulo-juego">Falling Ball</h1>
+            <h2 class="subtitulo-juego">Survival Drop</h2>
+            <div class="botones-inicio">
+                <button id="botonJugar" class="boton-principal">Jugar</button>
+                <button id="botonPuntuaciones" class="boton-secundario">Puntuaciones</button>
+            </div>
+            <div id="tablaPuntuaciones" class="tabla-puntuaciones oculto">
+                <h3>Mejor Puntuación</h3>
+                <p id="mejorPuntuacionInicio">0</p>
+                <button id="botonCerrarPuntuaciones" class="boton-pequeño">Cerrar</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de juego -->
+        <div id="pantallaJuego" class="pantalla oculto">
+            <canvas id="canvas" width="800" height="600"></canvas>
+
+            <!-- HUD del juego -->
+            <div class="hud">
+                <div class="hud-item">
+                    <span class="etiqueta">Puntuación:</span>
+                    <span id="puntuacionActual" class="valor">0</span>
+                </div>
+                <div class="hud-item">
+                    <span class="etiqueta">Vidas:</span>
+                    <span id="vidasActuales" class="valor">3</span>
+                </div>
+                <div class="hud-item">
+                    <span class="etiqueta">Mejor:</span>
+                    <span id="mejorPuntuacion" class="valor">0</span>
+                </div>
+                <div class="hud-item">
+                    <button id="botonPausa" class="boton-pausa">⏸ Pausa</button>
+                </div>
+            </div>
+
+            <!-- Barra de vida -->
+            <div class="contenedor-barra-vida">
+                <div id="barraVida" class="barra-vida"></div>
+            </div>
+        </div>
+
+        <!-- Pantalla de pausa -->
+        <div id="pantallaPausa" class="pantalla-overlay oculto">
+            <div class="panel-pausa">
+                <h2>Pausa</h2>
+                <p>Presiona P o haz clic en Continuar</p>
+                <button id="botonContinuar" class="boton-principal">Continuar</button>
+                <button id="botonMenuPausa" class="boton-secundario">Menú Principal</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de game over -->
+        <div id="pantallaGameOver" class="pantalla-overlay oculto">
+            <div class="panel-gameover">
+                <h2 class="titulo-gameover">Game Over</h2>
+                <p class="mensaje-final">Tu puntuación final:</p>
+                <p id="puntuacionFinal" class="puntuacion-grande">0</p>
+                <p class="mensaje-mejor">Mejor puntuación: <span id="mejorPuntuacionFinal">0</span></p>
+                <div class="botones-gameover">
+                    <button id="botonReintentar" class="boton-principal">Reintentar</button>
+                    <button id="botonMenuGameOver" class="boton-secundario">Menú Principal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="juego.js"></script>
+</body>
+</html>
