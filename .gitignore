@@ -1,0 +1,17 @@
+# Archivos de instrucciones locales
+INSTRUCCIONES_GITHUB.md
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Archivos temporales
+*.log
+*.tmp
