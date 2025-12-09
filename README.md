@@ -16,6 +16,10 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
 - 🎵 Sistema de sonidos (música de fondo, efectos)
 - 📊 Sistema de puntuación con localStorage
 - 🎨 Interfaz visual moderna y atractiva
+- 📱 **Totalmente responsive** - Funciona en PC, tablet y móvil
+- 🎯 **Controles táctiles** optimizados para dispositivos móviles
+- 🔥 **Dificultad progresiva** que aumenta cada 300 puntos
+- 🛡️ **Sistema anti-exploits** que evita puntuaciones infinitas
 
 ## Tipos de Plataformas
 
@@ -26,10 +30,19 @@ Falling Ball: Survival Drop es un juego arcade estilo indie desarrollado en Java
 
 ## Controles
 
+### PC (Teclado)
 - **Flecha Izquierda**: Mover la pelota hacia la izquierda
 - **Flecha Derecha**: Mover la pelota hacia la derecha
 - **P**: Pausar/Despausar el juego
 - **Click en botones**: Navegar por los menús
+
+### Móvil (Táctil)
+- **Tocar lado izquierdo**: Mover la pelota hacia la izquierda
+- **Tocar lado derecho**: Mover la pelota hacia la derecha
+- **Tocar centro**: Dejar que la pelota caiga libremente
+- **Tocar botones**: Navegar por los menús
+
+> **Nota**: El juego es completamente responsive y se adapta automáticamente al tamaño de tu pantalla.
 
 ## Cómo Ejecutar el Juego
 
@@ -95,6 +108,7 @@ Esto asegura que los commits se hagan con el usuario correcto.
 
 El proyecto se desarrolló de manera incremental con los siguientes commits:
 
+### Commits Iniciales
 1. **Inicial: crear estructura del proyecto y assets** - Estructura base de carpetas
 2. **Agregar canvas y probar render básico** - HTML y CSS base
 3. **Implementar física básica de la pelota (gravedad y movimiento)** - Sistema de física
@@ -108,6 +122,12 @@ El proyecto se desarrolló de manera incremental con los siguientes commits:
 11. **Sonidos: rebotar, daño y game over** - Sistema de audio
 12. **Pantallas: inicio, pausa y game over** - Navegación entre pantallas
 13. **Refactor y limpieza final** - Optimización del código
+14. **Agregar README con instrucciones completas** - Documentación
+
+### Mejoras y Optimizaciones
+15. **Arreglar bug de score infinito en esquinas** - Sistema anti-exploit
+16. **Aumentar dificultad progresiva del juego** - Balance y desafío mejorado
+17. **Hacer el juego responsive y agregar controles táctiles** - Soporte móvil completo
 
 ## Sistema de Puntuación
 
@@ -127,9 +147,20 @@ El proyecto se desarrolló de manera incremental con los siguientes commits:
   - Ser golpeado por proyectiles de enemigos (15 de daño)
 
 ### Dificultad Progresiva
-- La gravedad aumenta con el nivel de dificultad
-- Más enemigos aparecen a medida que avanzas
-- Las plataformas se generan de forma más espaciada
+El juego se vuelve progresivamente más difícil:
+- **Nivel de dificultad**: Aumenta cada 300 puntos
+- **Gravedad**: Se incrementa de 0.4 a 1.2 máximo
+- **Plataformas**: Se vuelven más pequeñas y espaciadas
+- **Plataformas peligrosas**: Más frágiles y móviles en niveles altos
+- **Velocidad de plataformas móviles**: Aumenta con el nivel
+- **Púas**: Mayor probabilidad de aparecer (hasta 50%)
+- **Enemigos**:
+  - Aparecen con más frecuencia
+  - Hasta 6 enemigos simultáneos en niveles altos
+  - Se mueven más rápido
+  - Disparan cada vez más rápido (de 2 segundos a 1 segundo)
+  - Proyectiles más veloces
+- **Sistema anti-exploit**: Daño gradual si te quedas más de 3 segundos sin bajar
 
 ## Tecnologías Utilizadas
 
